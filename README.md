@@ -1,2 +1,2 @@
-# notion-clone
-Notion clone
+## About
+Notion Clone that supports live document sharing, authentication, and AI features like summary.
