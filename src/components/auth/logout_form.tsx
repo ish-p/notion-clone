@@ -1,16 +1,6 @@
-import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/auth/auth_utils";
 import { cn } from "@/lib/utils";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-
-async function handleLogout() {
-	"use server";
-	await auth.api.signOut({
-		headers: await headers(),
-	});
-	redirect("/");
-}
 
 export async function LogoutForm({
 	className,
@@ -19,7 +9,7 @@ export async function LogoutForm({
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<div className="flex flex-col gap-3">
-				<form action={handleLogout}>
+				<form action={logout}>
 					<Button type="submit" variant="outline" className="w-full">
 						Logout
 					</Button>

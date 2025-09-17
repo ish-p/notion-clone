@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { LogoutForm } from "@/components/logout_form";
+import { LogoutForm } from "@/components/auth/logout_form";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
