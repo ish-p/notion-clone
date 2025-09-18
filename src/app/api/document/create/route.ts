@@ -1,6 +1,7 @@
 "use server";
 import { connect } from "@/lib/mongodb";
 import Document from "@/models/document";
+import MetaUser from "@/models/metauser";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
@@ -16,6 +17,12 @@ export async function POST(request: NextRequest) {
 		});
 
 		const savedDoc = await newDoc.save();
+
+		await MetaUser.findByIdAndUpdate(
+			userId,
+			{ $push: { docs: savedDoc._id } },
+			{ upsert: true }
+		);
 
 		return NextResponse.json({
 			message: "Document created successfully",

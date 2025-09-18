@@ -28,6 +28,7 @@ export default async function createNewDocument(): Promise<string | null> {
 			},
 			{
 				headers: {
+					// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
 					cookie: (await headers()).get("cookie"),
 				},
 				withCredentials: true,
