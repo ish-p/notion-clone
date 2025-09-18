@@ -3,7 +3,7 @@ import { LoginForm } from "@/components/auth/login_form";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function Page() {
+export default async function Login() {
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});
@@ -12,11 +12,5 @@ export default async function Page() {
 		redirect("/");
 	}
 
-	return (
-		<div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-			<div className="w-full max-w-sm text-center">
-				<LoginForm />
-			</div>
-		</div>
-	);
+	return <LoginForm />;
 }

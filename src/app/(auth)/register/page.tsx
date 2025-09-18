@@ -3,7 +3,7 @@ import { RegisterForm } from "@/components/auth/register_form";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function Page() {
+export default async function Register() {
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});

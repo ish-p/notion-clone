@@ -53,7 +53,7 @@ export async function login(_: unknown, formData: FormData) {
 			};
 		}
 	}
-	redirect("/dashboard");
+	redirect("/home");
 }
 
 const registerSchema = z.object({
@@ -91,7 +91,7 @@ export async function register(_: unknown, formData: FormData) {
 	try {
 		await auth.api.signUpEmail({
 			body: {
-				name: data.email,
+				name: data.email.split("@")[0],
 				email: data.email,
 				password: data.password,
 			},
@@ -108,7 +108,7 @@ export async function register(_: unknown, formData: FormData) {
 			};
 		}
 	}
-	redirect("/dashboard");
+	redirect("/home");
 }
 
 export async function logout() {
@@ -125,7 +125,7 @@ export async function signInOauth(_: unknown, formData: FormData) {
 		const { url } = await auth.api.signInSocial({
 			body: {
 				provider: type,
-				callbackURL: "/dashboard",
+				callbackURL: "/home",
 			},
 		});
 		oauthURL = url;

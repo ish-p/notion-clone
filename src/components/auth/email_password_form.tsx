@@ -24,6 +24,7 @@ export default function EmailPasswordForm({ type }: { type: string }) {
 						placeholder="email@example.com"
 						defaultValue={error?.fields?.email?.toString() ?? ""}
 						required
+						disabled
 					/>
 				</div>
 				<div className="grid gap-3">
@@ -44,13 +45,16 @@ export default function EmailPasswordForm({ type }: { type: string }) {
 						type="password"
 						placeholder="********"
 						required
+						disabled // Only accepting OAuth login for now
 					/>
 				</div>
 				<Button type="submit" className="w-full">
 					{pending ? (
 						<Spinner key="circle" variant="circle" />
-					) : (
+					) : type === "login" ? (
 						<>Login</>
+					) : (
+						<>Register</>
 					)}
 				</Button>
 				{error && (

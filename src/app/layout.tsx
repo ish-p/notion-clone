@@ -1,3 +1,5 @@
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -13,7 +15,15 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body>{children}</body>
+			<body>
+				<Header />
+				<div className="flex min-h-screen">
+					<Sidebar />
+					<div className="flex-1 p-4 bg-gray-100 overflow-y-auto scrollbar-hide">
+						{children}
+					</div>
+				</div>
+			</body>
 		</html>
 	);
 }
