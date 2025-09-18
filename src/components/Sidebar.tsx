@@ -1,17 +1,21 @@
+"use client";
 import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
 } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
+import { useState } from "react";
 import NewDocumentButton from "./NewDocumentButton";
 
 export default function Sidebar() {
+	const [open, setOpen] = useState(false);
+
 	const menuOptions = (
 		<>
-			<NewDocumentButton />
+			<NewDocumentButton setOpen={setOpen} />
 			{/* Others */}
 		</>
 	);
@@ -19,7 +23,7 @@ export default function Sidebar() {
 	return (
 		<div className="p-2 md:5 bg-gray-200 relative">
 			<div className="md:hidden">
-				<Sheet>
+				<Sheet open={open} onOpenChange={setOpen}>
 					<SheetTrigger>
 						<MenuIcon />
 					</SheetTrigger>

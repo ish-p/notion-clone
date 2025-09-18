@@ -1,5 +1,5 @@
 "use client";
-import { signInOauth } from "@/lib/auth/auth_utils";
+import { signInOauth } from "@/actions/auth";
 import { useActionState } from "react";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/shadcn-io/spinner";

@@ -1,6 +1,6 @@
 "use client";
 
-import { login, register } from "@/lib/auth/auth_utils";
+import { login, register } from "@/actions/auth";
 import { useActionState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";

@@ -112,9 +112,16 @@ export async function register(_: unknown, formData: FormData) {
 }
 
 export async function logout() {
-	await auth.api.signOut({
-		headers: await headers(),
-	});
+	try {
+		await auth.api.signOut({
+			headers: await headers(),
+		});
+	} catch (error) {
+		console.log(error);
+		return {
+			message: "Something went wrong. Please try again.",
+		};
+	}
 	redirect("/");
 }
 
