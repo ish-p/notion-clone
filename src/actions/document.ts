@@ -46,6 +46,70 @@ export async function createNewDocument(): Promise<string | null> {
 		});
 }
 
+export async function addDocumentEditor(
+	docId: string,
+	editorEmail: string
+): Promise<boolean> {
+	const session = await checkCredentials();
+	return await axios
+		.post(
+			`http://localhost:3000/api/document/add`,
+			{
+				userId: session.user.id,
+				docId,
+				editorEmail,
+				email: session.user.email,
+			},
+			{
+				headers: {
+					// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
+					cookie: (await headers()).get("cookie"),
+				},
+				withCredentials: true,
+			}
+		)
+		.then(function () {
+			return true;
+		})
+		.catch(function (error) {
+			console.log(error);
+			return false;
+		})
+		.finally(function () {
+			return false;
+		});
+}
+
+export async function deleteDocument(docId: string): Promise<boolean> {
+	const session = await checkCredentials();
+	return await axios
+		.post(
+			`http://localhost:3000/api/document/delete`,
+			{
+				userId: session.user.id,
+				docId,
+				email: session.user.email,
+			},
+			{
+				headers: {
+					// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
+					cookie: (await headers()).get("cookie"),
+				},
+				withCredentials: true,
+			}
+		)
+		.then(function () {
+			return true;
+		})
+		.catch(function (error) {
+			console.log(error);
+			return false;
+		})
+		.finally(function () {
+			return false;
+		});
+}
+
 interface detailedDocsFormat {
 	_id: string;
 	ownerId: string;
@@ -63,9 +127,10 @@ export async function getDocumentById(
 	const session = await checkCredentials();
 	return await axios
 		.post(
-			`http://localhost:3000/api/document/get/${docId}`,
+			`http://localhost:3000/api/document/get`,
 			{
 				userId: session.user.id,
+				docId,
 				email: session.user.email,
 			},
 			{
@@ -77,7 +142,7 @@ export async function getDocumentById(
 			}
 		)
 		.then(function (response) {
-			return response.data.docObj;
+			return response.data.doc;
 		})
 		.catch(function (error) {
 			console.log(error);
@@ -96,7 +161,7 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 	const session = await checkCredentials();
 	const response = await axios
 		.post(
-			`http://localhost:3000/api/document/get/mine/${session.user.id}`,
+			`http://localhost:3000/api/document/get`,
 			{
 				userId: session.user.id,
 				email: session.user.email,
@@ -109,8 +174,8 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 				withCredentials: true,
 			}
 		)
-		.then(function (response) {
-			return response.data.docs;
+		.then(function (r) {
+			return r.data.docs;
 		})
 		.catch(function (error) {
 			console.log(error);
@@ -118,7 +183,7 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 		.finally(function () {
 			return null;
 		});
-	if (!response || !response.docs) {
+	if (!response) {
 		return [];
 	}
 	// for each, get role

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
 import { useState } from "react";
+import MyDocuments from "./MyDocuments";
 import NewDocumentButton from "./NewDocumentButton";
 
 export default function Sidebar() {
@@ -16,7 +17,7 @@ export default function Sidebar() {
 	const menuOptions = (
 		<>
 			<NewDocumentButton setOpen={setOpen} />
-			{/* Others */}
+			<MyDocuments />
 		</>
 	);
 

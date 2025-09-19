@@ -8,25 +8,25 @@ export async function POST(request: NextRequest) {
 	connect();
 	try {
 		const reqBody = await request.json();
-		const { userId, email } = reqBody;
+		const { userId, docId } = reqBody;
 
-		const newDoc = new Document({
-			ownerId: userId,
-			ownerEmail: email,
-		});
-
-		const savedDoc = await newDoc.save();
-
-		await MetaUser.findByIdAndUpdate(
-			userId,
-			{ $push: { docs: savedDoc._id } },
-			{ upsert: true }
-		);
-
+		const doc = await Document.findById(docId);
+		if (doc) {
+			if (userId === doc.ownerId) {
+				await Document.findByIdAndDelete(docId);
+				await MetaUser.findByIdAndUpdate(userId, {
+					$pop: { docs: docId },
+				});
+				return NextResponse.json({
+					message: "Document deleted successfully",
+					success: true,
+					doc,
+				});
+			}
+		}
 		return NextResponse.json({
-			message: "Document created successfully",
-			success: true,
-			docId: savedDoc._id,
+			message: "Document not found",
+			success: false,
 		});
 	} catch (error: unknown) {
 		return NextResponse.json({ error: error }, { status: 500 });
