@@ -1,4 +1,5 @@
 "use client";
+import { docsFormat, getDocumentsByUserId } from "@/actions/document";
 import {
 	Sheet,
 	SheetContent,
@@ -7,17 +8,42 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
-import { useState } from "react";
-import MyDocuments from "./MyDocuments";
+import { useEffect, useState } from "react";
 import NewDocumentButton from "./NewDocumentButton";
+import SidebarOption from "./SidebarOption";
+import { Spinner } from "./ui/shadcn-io/spinner";
 
 export default function Sidebar() {
+	const [data, setData] = useState<docsFormat[]>([]);
+	const [loading, setLoading] = useState(true);
+
 	const [open, setOpen] = useState(false);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			setLoading(true);
+			const docs = await getDocumentsByUserId();
+			setData(docs);
+			setLoading(false);
+		};
+		fetchData();
+	}, []);
 
 	const menuOptions = (
 		<>
 			<NewDocumentButton setOpen={setOpen} />
-			<MyDocuments />
+			{loading ? (
+				<Spinner key="circle" variant="circle" />
+			) : (
+				// First seperate into owner and editor arrays
+				data.map((item) => (
+					<SidebarOption
+						key={item.docId}
+						docId={item.docId}
+						name={item.name}
+					/>
+				))
+			)}
 		</>
 	);
 

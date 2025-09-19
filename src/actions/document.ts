@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import axios from "axios";
 import { Date } from "mongoose";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 async function checkCredentials() {
 	const session = await auth.api.getSession({
@@ -17,10 +18,16 @@ async function checkCredentials() {
 	return session;
 }
 
-export async function createNewDocument(): Promise<string | null> {
+export async function createNewDocument(
+	shouldRedirect: boolean
+): Promise<string | null> {
 	const session = await checkCredentials();
 	if (!session) {
-		return null;
+		if (shouldRedirect) {
+			redirect("/login");
+		} else {
+			return null;
+		}
 	}
 	return await axios
 		.post(
@@ -57,13 +64,12 @@ export async function addDocumentEditor(
 		return false;
 	}
 	return await axios
-		.post(
+		.put(
 			`http://localhost:3000/api/document/add`,
 			{
 				userId: session.user.id,
 				docId,
 				editorEmail,
-				email: session.user.email,
 			},
 			{
 				headers: {
@@ -91,21 +97,17 @@ export async function deleteDocument(docId: string): Promise<boolean> {
 		return false;
 	}
 	return await axios
-		.post(
-			`http://localhost:3000/api/document/delete`,
-			{
+		.delete(`http://localhost:3000/api/document/delete`, {
+			params: {
 				userId: session.user.id,
 				docId,
-				email: session.user.email,
 			},
-			{
-				headers: {
-					// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
-					cookie: (await headers()).get("cookie"),
-				},
-				withCredentials: true,
-			}
-		)
+			headers: {
+				// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
+				cookie: (await headers()).get("cookie"),
+			},
+			withCredentials: true,
+		})
 		.then(function () {
 			return true;
 		})
@@ -137,21 +139,17 @@ export async function getDocumentById(
 		return null;
 	}
 	return await axios
-		.post(
-			`http://localhost:3000/api/document/get`,
-			{
+		.get(`http://localhost:3000/api/document/get`, {
+			params: {
 				userId: session.user.id,
 				docId,
-				email: session.user.email,
 			},
-			{
-				headers: {
-					// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
-					cookie: (await headers()).get("cookie"),
-				},
-				withCredentials: true,
-			}
-		)
+			headers: {
+				// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
+				cookie: (await headers()).get("cookie"),
+			},
+			withCredentials: true,
+		})
 		.then(function (response) {
 			return response.data.doc;
 		})
@@ -175,20 +173,16 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 		return [];
 	}
 	const response = await axios
-		.post(
-			`http://localhost:3000/api/document/get`,
-			{
+		.get(`http://localhost:3000/api/document/get`, {
+			params: {
 				userId: session.user.id,
-				email: session.user.email,
 			},
-			{
-				headers: {
-					// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
-					cookie: (await headers()).get("cookie"),
-				},
-				withCredentials: true,
-			}
-		)
+			headers: {
+				// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
+				cookie: (await headers()).get("cookie"),
+			},
+			withCredentials: true,
+		})
 		.then(function (r) {
 			return r.data.docs;
 		})
@@ -198,25 +192,28 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 		.finally(function () {
 			return null;
 		});
+
 	if (!response) {
 		return [];
 	}
-	// for each, get role
+
+	// We have our string[] of docId's, now let's seperate by role
 	const userDocs: docsFormat[] = [];
 	for (const docId of response) {
 		const doc: detailedDocsFormat | null = await getDocumentById(docId);
 		if (doc) {
-			if (session.user.id in doc.editors) {
+			let role: "owner" | "editor" | undefined = undefined;
+			if (doc.ownerId === session.user.id) {
+				role = "owner";
+			} else if (session.user.id in doc.editors) {
+				role = "editor";
+			}
+			// Only push if role is defined
+			if (role) {
 				userDocs.push({
 					docId: doc._id,
 					name: doc.name,
-					role: "editor",
-				});
-			} else if (doc.ownerId === session.user.id) {
-				userDocs.push({
-					docId: doc._id,
-					name: doc.name,
-					role: "owner",
+					role,
 				});
 			}
 		}

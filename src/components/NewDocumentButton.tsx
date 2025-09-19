@@ -16,8 +16,7 @@ export default function NewDocumentButton({
 
 	const handleNewDocument = () => {
 		startTransition(async () => {
-			const docId = await createNewDocument();
-			console.log(docId);
+			const docId = await createNewDocument(true);
 			if (docId) {
 				setOpen(false);
 				router.push(`/doc/${docId}`);

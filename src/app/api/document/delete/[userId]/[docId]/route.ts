@@ -4,11 +4,11 @@ import Document from "@/models/document";
 import MetaUser from "@/models/metauser";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
 	connect();
 	try {
-		const reqBody = await request.json();
-		const { userId, docId } = reqBody;
+		const userId = request.nextUrl.searchParams.get("userId")!;
+		const docId = request.nextUrl.searchParams.get("docId")!;
 
 		const doc = await Document.findById(docId);
 		if (doc) {

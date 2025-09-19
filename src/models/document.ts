@@ -18,6 +18,9 @@ const documentSchema = new mongoose.Schema(
 		editors: {
 			type: [String],
 		},
+		content: {
+			type: Object,
+		},
 	},
 	{ timestamps: true }
 );

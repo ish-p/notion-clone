@@ -74,8 +74,7 @@ export async function register(_: unknown, formData: FormData) {
 	if (error) {
 		const tree = z.treeifyError(error);
 		if (
-			!tree.properties?.email?.errors &&
-			tree.properties?.password?.errors
+			!tree.properties?.email?.errors
 		) {
 			return {
 				message: error.issues[0].message,
