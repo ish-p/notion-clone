@@ -28,15 +28,17 @@ export default function Sidebar() {
 					<SheetTrigger>
 						<MenuIcon />
 					</SheetTrigger>
-					<SheetContent side="left">
+					<SheetContent side="left" className="max-w-3xs">
 						<SheetHeader>
-							<SheetTitle>Menu</SheetTitle>
+							<SheetTitle className="mb-4">Menu</SheetTitle>
 							{menuOptions}
 						</SheetHeader>
 					</SheetContent>
 				</Sheet>
 			</div>
-			<div className="hidden md:inline">{menuOptions}</div>
+			<div className="hidden md:inline-flex flex-wrap items-center overflow-clip gap-4 max-w-35">
+				{menuOptions}
+			</div>
 		</div>
 	);
 }

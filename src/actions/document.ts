@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import axios from "axios";
 import { Date } from "mongoose";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 async function checkCredentials() {
 	const session = await auth.api.getSession({
@@ -12,7 +11,7 @@ async function checkCredentials() {
 	});
 
 	if (!session) {
-		redirect("/login");
+		return null;
 	}
 
 	return session;
@@ -20,6 +19,9 @@ async function checkCredentials() {
 
 export async function createNewDocument(): Promise<string | null> {
 	const session = await checkCredentials();
+	if (!session) {
+		return null;
+	}
 	return await axios
 		.post(
 			"http://localhost:3000/api/document/create",
@@ -51,6 +53,9 @@ export async function addDocumentEditor(
 	editorEmail: string
 ): Promise<boolean> {
 	const session = await checkCredentials();
+	if (!session) {
+		return false;
+	}
 	return await axios
 		.post(
 			`http://localhost:3000/api/document/add`,
@@ -82,6 +87,9 @@ export async function addDocumentEditor(
 
 export async function deleteDocument(docId: string): Promise<boolean> {
 	const session = await checkCredentials();
+	if (!session) {
+		return false;
+	}
 	return await axios
 		.post(
 			`http://localhost:3000/api/document/delete`,
@@ -125,6 +133,9 @@ export async function getDocumentById(
 	docId: string
 ): Promise<detailedDocsFormat | null> {
 	const session = await checkCredentials();
+	if (!session) {
+		return null;
+	}
 	return await axios
 		.post(
 			`http://localhost:3000/api/document/get`,
@@ -152,13 +163,17 @@ export async function getDocumentById(
 		});
 }
 
-interface docsFormat {
+export interface docsFormat {
 	docId: string;
-	role: "owner" | "editor" | "viewer" | null;
+	name: string;
+	role: "owner" | "editor";
 }
 
 export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 	const session = await checkCredentials();
+	if (!session) {
+		return [];
+	}
 	const response = await axios
 		.post(
 			`http://localhost:3000/api/document/get`,
@@ -188,21 +203,23 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 	}
 	// for each, get role
 	const userDocs: docsFormat[] = [];
-	response.docs.forEach(async (docId: string) => {
+	for (const docId of response) {
 		const doc: detailedDocsFormat | null = await getDocumentById(docId);
 		if (doc) {
 			if (session.user.id in doc.editors) {
 				userDocs.push({
 					docId: doc._id,
+					name: doc.name,
 					role: "editor",
 				});
 			} else if (doc.ownerId === session.user.id) {
 				userDocs.push({
 					docId: doc._id,
+					name: doc.name,
 					role: "owner",
 				});
 			}
 		}
-	});
+	}
 	return userDocs;
 }
