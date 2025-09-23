@@ -49,7 +49,7 @@ export default function Sidebar() {
 
 	return (
 		<div className="p-2 md:5 bg-gray-200 relative">
-			<div className="md:hidden">
+			<div className="md:hidden shrink-0">
 				<Sheet open={open} onOpenChange={setOpen}>
 					<SheetTrigger>
 						<MenuIcon />
@@ -62,7 +62,7 @@ export default function Sidebar() {
 					</SheetContent>
 				</Sheet>
 			</div>
-			<div className="hidden md:inline-flex flex-wrap items-center overflow-clip gap-4 max-w-35">
+			<div className="hidden md:inline-flex flex-wrap flex-none items-center align-middle justify-center overflow-clip gap-4 w-32">
 				{menuOptions}
 			</div>
 		</div>

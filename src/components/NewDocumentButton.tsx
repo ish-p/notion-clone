@@ -27,7 +27,7 @@ export default function NewDocumentButton({
 	};
 	return (
 		<>
-			<Button onClick={handleNewDocument} disabled={pending}>
+			<Button onClick={handleNewDocument} disabled={pending} className="min-w-32">
 				{pending ? (
 					<Spinner key="circle" variant="circle" />
 				) : (
