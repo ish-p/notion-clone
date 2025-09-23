@@ -107,7 +107,7 @@ export async function register(_: unknown, formData: FormData) {
 			};
 		}
 	}
-	redirect("/home");
+	redirect("/");
 }
 
 export async function logout() {
@@ -131,7 +131,7 @@ export async function signInOauth(_: unknown, formData: FormData) {
 		const { url } = await auth.api.signInSocial({
 			body: {
 				provider: type,
-				callbackURL: "/home",
+				callbackURL: "/",
 			},
 		});
 		oauthURL = url;

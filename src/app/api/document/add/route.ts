@@ -14,20 +14,30 @@ export async function PUT(request: NextRequest) {
 		if (doc && doc.ownerId === userId) {
 			const editor = await MetaUser.findOneAndUpdate(
 				{ email: editorEmail },
-				{ $push: { docs: doc._id } },
+				{
+					$push: {
+						docs: {
+							docId: doc._id,
+							name: doc.name,
+							role: "editor",
+						},
+					},
+				},
 				{ upsert: true }
 			);
-			doc.editors.$push(editor._id);
-			await doc.save();
+			await Document.updateOne(
+				{ _id: docId },
+				{ $push: { editors: editor._id } }
+			);
 			return NextResponse.json({
 				message: "Editor added successfully",
 				success: true,
 			});
 		}
-		return NextResponse.json({
-			message: "Document not found",
-			success: false,
-		});
+		return NextResponse.json(
+			{ error: "Document not found" },
+			{ status: 500 }
+		);
 	} catch (error: unknown) {
 		return NextResponse.json({ error: error }, { status: 500 });
 	}

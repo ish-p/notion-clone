@@ -5,7 +5,17 @@ const metaUserSchema = new Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		required: [true, "Please provide user id"],
 	},
-	docs: [String],
+	docs: [
+		{
+			_id: false,
+			docId: String,
+			name: String,
+			role: {
+				type: String,
+				enum: ["owner", "editor"],
+			},
+		},
+	],
 });
 
 const MetaUser =

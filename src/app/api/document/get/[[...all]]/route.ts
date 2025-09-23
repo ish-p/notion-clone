@@ -29,10 +29,7 @@ async function findAllUserDocs(userId: string) {
 			docs: metauser.docs,
 		});
 	} else {
-		return NextResponse.json({
-			message: "Could not find requested user",
-			success: false,
-		});
+		return NextResponse.json({ error: "Could not find requested user" }, { status: 500 });
 	}
 }
 
@@ -47,8 +44,5 @@ async function findDocById(docId: string, userId: string) {
 			});
 		}
 	}
-	return NextResponse.json({
-		message: "Document not found",
-		success: false,
-	});
+	return NextResponse.json({ error: "Document not found" }, { status: 500 });
 }

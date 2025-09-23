@@ -23,6 +23,7 @@ export default function Sidebar() {
 		const fetchData = async () => {
 			setLoading(true);
 			const docs = await getDocumentsByUserId();
+			console.log(docs);
 			setData(docs);
 			setLoading(false);
 		};
@@ -31,9 +32,9 @@ export default function Sidebar() {
 
 	const menuOptions = (
 		<>
-			<NewDocumentButton setOpen={setOpen} />
+			<NewDocumentButton setOpen={setOpen} data={data} setData={setData} />
 			{loading ? (
-				<Spinner key="circle" variant="circle" />
+				<Spinner key="circle" variant="circle" className="min-w-full m-0 p-0" />
 			) : (
 				// First seperate into owner and editor arrays
 				data.map((item) => (
@@ -41,6 +42,7 @@ export default function Sidebar() {
 						key={item.docId}
 						docId={item.docId}
 						name={item.name}
+						setOpen={setOpen}
 					/>
 				))
 			)}
@@ -62,7 +64,7 @@ export default function Sidebar() {
 					</SheetContent>
 				</Sheet>
 			</div>
-			<div className="hidden md:inline-flex flex-wrap flex-none items-center align-middle justify-center overflow-clip gap-4 w-32">
+			<div className="hidden md:inline-flex flex-wrap flex-none overflow-clip gap-4 w-36">
 				{menuOptions}
 			</div>
 		</div>

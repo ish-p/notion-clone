@@ -24,10 +24,7 @@ export async function DELETE(request: NextRequest) {
 				});
 			}
 		}
-		return NextResponse.json({
-			message: "Document not found",
-			success: false,
-		});
+		return NextResponse.json({ error: "Document not found" }, { status: 500 });
 	} catch (error: unknown) {
 		return NextResponse.json({ error: error }, { status: 500 });
 	}

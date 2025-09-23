@@ -14,19 +14,26 @@ export async function POST(request: NextRequest) {
 			ownerId: userId,
 			ownerEmail: email,
 		});
-
 		const savedDoc = await newDoc.save();
 
 		await MetaUser.findByIdAndUpdate(
 			userId,
-			{ $push: { docs: savedDoc._id } },
+			{
+				$push: {
+					docs: {
+						docId: savedDoc._id,
+						name: savedDoc.name,
+						role: "owner",
+					},
+				},
+			},
 			{ upsert: true }
 		);
 
 		return NextResponse.json({
 			message: "Document created successfully",
 			success: true,
-			docId: savedDoc._id,
+			doc: savedDoc,
 		});
 	} catch (error: unknown) {
 		return NextResponse.json({ error: error }, { status: 500 });

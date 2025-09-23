@@ -18,16 +18,10 @@ async function checkCredentials() {
 	return session;
 }
 
-export async function createNewDocument(
-	shouldRedirect: boolean
-): Promise<string | null> {
+export async function createNewDocument(): Promise<detailedDocsFormat | null> {
 	const session = await checkCredentials();
 	if (!session) {
-		if (shouldRedirect) {
-			redirect("/login");
-		} else {
-			return null;
-		}
+		redirect("/login");
 	}
 	return await axios
 		.post(
@@ -45,14 +39,12 @@ export async function createNewDocument(
 			}
 		)
 		.then(function (response) {
-			return response.data.docId;
+			return response.data.doc;
 		})
 		.catch(function (error) {
 			console.log(error);
-		})
-		.finally(function () {
 			return null;
-		});
+		})
 }
 
 export async function addDocumentEditor(
@@ -86,9 +78,6 @@ export async function addDocumentEditor(
 			console.log(error);
 			return false;
 		})
-		.finally(function () {
-			return false;
-		});
 }
 
 export async function deleteDocument(docId: string): Promise<boolean> {
@@ -115,12 +104,9 @@ export async function deleteDocument(docId: string): Promise<boolean> {
 			console.log(error);
 			return false;
 		})
-		.finally(function () {
-			return false;
-		});
 }
 
-interface detailedDocsFormat {
+export interface detailedDocsFormat {
 	_id: string;
 	ownerId: string;
 	ownerEmail: string;
@@ -155,10 +141,8 @@ export async function getDocumentById(
 		})
 		.catch(function (error) {
 			console.log(error);
-		})
-		.finally(function () {
 			return null;
-		});
+		})
 }
 
 export interface docsFormat {
@@ -172,7 +156,7 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 	if (!session) {
 		return [];
 	}
-	const response = await axios
+	const res = await axios
 		.get(`http://localhost:3000/api/document/get`, {
 			params: {
 				userId: session.user.id,
@@ -188,35 +172,7 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 		})
 		.catch(function (error) {
 			console.log(error);
+			return [];
 		})
-		.finally(function () {
-			return null;
-		});
-
-	if (!response) {
-		return [];
-	}
-
-	// We have our string[] of docId's, now let's seperate by role
-	const userDocs: docsFormat[] = [];
-	for (const docId of response) {
-		const doc: detailedDocsFormat | null = await getDocumentById(docId);
-		if (doc) {
-			let role: "owner" | "editor" | undefined = undefined;
-			if (doc.ownerId === session.user.id) {
-				role = "owner";
-			} else if (session.user.id in doc.editors) {
-				role = "editor";
-			}
-			// Only push if role is defined
-			if (role) {
-				userDocs.push({
-					docId: doc._id,
-					name: doc.name,
-					role,
-				});
-			}
-		}
-	}
-	return userDocs;
+	return res;
 }
