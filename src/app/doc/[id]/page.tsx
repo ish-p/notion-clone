@@ -9,7 +9,7 @@ export default async function Doc() {
 	});
 
 	if (!session) {
-		redirect("/");
+		redirect("/login");
 	}
 
 	return <DocumentPage />;

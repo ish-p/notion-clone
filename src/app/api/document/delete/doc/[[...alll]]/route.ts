@@ -1,21 +1,35 @@
 "use server";
+import { auth } from "@/auth";
 import { connect } from "@/lib/mongodb";
 import Document from "@/models/document";
 import MetaUser from "@/models/metauser";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(request: NextRequest) {
 	connect();
+
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!session) {
+		return NextResponse.json(
+			{ error: "You must be logged in to perform this action" },
+			{ status: 401 }
+		);
+	}
+
 	try {
-		const email = request.nextUrl.searchParams.get("email")!;
 		const docId = request.nextUrl.searchParams.get("docId")!;
 
 		const doc = await Document.findById(docId);
 		if (doc) {
-			if (email === doc.ownerEmail) {
+			if (session.user.email === doc.ownerEmail) {
+				// go through editor email's
 				await Document.findByIdAndDelete(docId);
 				await MetaUser.findOneAndUpdate(
-					{ email: email },
+					{ email: session.user.email },
 					{
 						$pop: { docs: docId },
 					}

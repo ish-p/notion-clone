@@ -26,9 +26,7 @@ export async function createNewDocument(): Promise<detailedDocsFormat | null> {
 	return await axios
 		.post(
 			"http://localhost:3000/api/document/create",
-			{
-				email: session.user.email,
-			},
+			{},
 			{
 				headers: {
 					// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
@@ -58,7 +56,6 @@ export async function addDocumentEditor(
 		.put(
 			`http://localhost:3000/api/document/add`,
 			{
-				email: session.user.email,
 				docId,
 				editorEmail,
 			},
@@ -87,7 +84,6 @@ export async function deleteDocument(docId: string): Promise<boolean> {
 	return await axios
 		.delete(`http://localhost:3000/api/document/delete`, {
 			params: {
-				email: session.user.email,
 				docId,
 			},
 			headers: {
@@ -104,6 +100,8 @@ export async function deleteDocument(docId: string): Promise<boolean> {
 			return false;
 		});
 }
+
+// removeEditor function
 
 export interface detailedDocsFormat {
 	_id: string;
@@ -126,7 +124,6 @@ export async function getDocumentById(
 	return await axios
 		.get(`http://localhost:3000/api/document/get`, {
 			params: {
-				email: session.user.email,
 				docId,
 			},
 			headers: {
@@ -157,9 +154,6 @@ export async function getDocumentsByUser(): Promise<docsFormat[]> {
 	}
 	const res = await axios
 		.get(`http://localhost:3000/api/document/get`, {
-			params: {
-				email: session.user.email,
-			},
 			headers: {
 				// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
 				cookie: (await headers()).get("cookie"),
