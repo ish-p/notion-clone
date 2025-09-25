@@ -1,5 +1,5 @@
 "use client";
-import { docsFormat, getDocumentsByUserId } from "@/actions/document";
+import { docsFormat, getDocumentsByUser } from "@/actions/document";
 import {
 	Sheet,
 	SheetContent,
@@ -22,7 +22,7 @@ export default function Sidebar() {
 	useEffect(() => {
 		const fetchData = async () => {
 			setLoading(true);
-			const docs = await getDocumentsByUserId();
+			const docs = await getDocumentsByUser();
 			console.log(docs);
 			setData(docs);
 			setLoading(false);
@@ -32,9 +32,17 @@ export default function Sidebar() {
 
 	const menuOptions = (
 		<>
-			<NewDocumentButton setOpen={setOpen} data={data} setData={setData} />
+			<NewDocumentButton
+				setOpen={setOpen}
+				data={data}
+				setData={setData}
+			/>
 			{loading ? (
-				<Spinner key="circle" variant="circle" className="min-w-full m-0 p-0" />
+				<Spinner
+					key="circle"
+					variant="circle"
+					className="min-w-full m-0 p-0"
+				/>
 			) : (
 				// First seperate into owner and editor arrays
 				data.map((item) => (

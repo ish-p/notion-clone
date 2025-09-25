@@ -39,7 +39,7 @@ async function findAllUserDocs(email: string) {
 async function findDocById(docId: string, email: string) {
 	const doc = await Document.findById(docId);
 	if (doc) {
-		if (email === doc.ownerEmail || email in doc.editors) {
+		if (email === doc.ownerEmail || doc.editors.includes(email)) {
 			return NextResponse.json({
 				message: "Document found successfully, sending back",
 				success: true,

@@ -12,8 +12,8 @@ export default function DocumentPage() {
 
 	return (
 		<div>
-			<div>{id!.toString()}</div>
-			<DocumentContent docId={id!.toString()} />
+			<div>{id.toString()}</div>
+			<DocumentContent docId={id.toString()} />
 		</div>
 	);
 }

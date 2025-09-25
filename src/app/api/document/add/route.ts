@@ -8,10 +8,10 @@ export async function PUT(request: NextRequest) {
 	connect();
 	try {
 		const reqBody = await request.json();
-		const { userEmail, docId, editorEmail } = reqBody;
+		const { email, docId, editorEmail } = reqBody;
 
 		const doc = await Document.findById(docId);
-		if (doc && doc.ownerEmail === userEmail) {
+		if (doc && doc.ownerEmail === email) {
 			await MetaUser.findOneAndUpdate(
 				{ email: editorEmail },
 				{

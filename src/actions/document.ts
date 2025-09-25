@@ -58,7 +58,7 @@ export async function addDocumentEditor(
 		.put(
 			`http://localhost:3000/api/document/add`,
 			{
-				userEmail: session.user.email,
+				email: session.user.email,
 				docId,
 				editorEmail,
 			},
@@ -150,7 +150,7 @@ export interface docsFormat {
 	role: "owner" | "editor";
 }
 
-export async function getDocumentsByUserId(): Promise<docsFormat[]> {
+export async function getDocumentsByUser(): Promise<docsFormat[]> {
 	const session = await checkCredentials();
 	if (!session) {
 		return [];

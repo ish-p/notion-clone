@@ -14,11 +14,9 @@ export default function DocumentContent({ docId }: { docId: string }) {
 			const doc = await getDocumentById(docId.toString());
 			if (doc) {
 				setData(doc);
-				setPending(false);
-				return;
+			} else {
+				setError("Document does not exist.");
 			}
-
-			setError("Document does not exist.");
 			setPending(false);
 		};
 		fetchDoc();
