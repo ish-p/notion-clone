@@ -1,9 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 
 const metaUserSchema = new Schema({
-	_id: {
-		type: mongoose.Schema.Types.ObjectId,
-		required: [true, "Please provide user id"],
+	email: {
+		type: String,
+		required: [true, "Please provide user email"],
 	},
 	docs: [
 		{

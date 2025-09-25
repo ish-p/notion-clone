@@ -7,12 +7,12 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
 	connect();
 	try {
-		const userId = request.nextUrl.searchParams.get("userId")!;
+		const email = request.nextUrl.searchParams.get("email")!;
 		const docId = request.nextUrl.searchParams.get("docId");
 		if (!docId) {
-			return await findAllUserDocs(userId);
+			return await findAllUserDocs(email);
 		} else {
-			return await findDocById(docId, userId);
+			return await findDocById(docId, email);
 		}
 	} catch (error: unknown) {
 		console.log(error);
@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
 	}
 }
 
-async function findAllUserDocs(userId: string) {
-	const metauser = await MetaUser.findById(userId);
+async function findAllUserDocs(email: string) {
+	const metauser = await MetaUser.findOne({ email: email });
 	if (metauser) {
 		return NextResponse.json({
 			message: "Found meta user, returning their docs",
@@ -29,20 +29,32 @@ async function findAllUserDocs(userId: string) {
 			docs: metauser.docs,
 		});
 	} else {
-		return NextResponse.json({ error: "Could not find requested user" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Could not find requested user" },
+			{ status: 500 }
+		);
 	}
 }
 
-async function findDocById(docId: string, userId: string) {
+async function findDocById(docId: string, email: string) {
 	const doc = await Document.findById(docId);
 	if (doc) {
-		if (userId === doc.ownerId || userId in doc.editors) {
+		if (email === doc.ownerEmail || email in doc.editors) {
 			return NextResponse.json({
 				message: "Document found successfully, sending back",
 				success: true,
 				doc,
 			});
+		} else {
+			return NextResponse.json(
+				{ error: "Insufficient permission" },
+				{ status: 403 }
+			);
 		}
+	} else {
+		return NextResponse.json(
+			{ error: "Document not found" },
+			{ status: 500 }
+		);
 	}
-	return NextResponse.json({ error: "Document not found" }, { status: 500 });
 }

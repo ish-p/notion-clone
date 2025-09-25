@@ -3,13 +3,9 @@ import mongoose from "mongoose";
 
 const documentSchema = new mongoose.Schema(
 	{
-		ownerId: {
-			type: String,
-			required: [true, "Please provide owner id"],
-		},
 		ownerEmail: {
 			type: String,
-			required: [true, "Please provide email"],
+			required: [true, "Please provide owner email"],
 		},
 		name: {
 			type: String,

@@ -8,11 +8,11 @@ export async function PUT(request: NextRequest) {
 	connect();
 	try {
 		const reqBody = await request.json();
-		const { userId, docId, editorEmail } = reqBody;
+		const { userEmail, docId, editorEmail } = reqBody;
 
 		const doc = await Document.findById(docId);
-		if (doc && doc.ownerId === userId) {
-			const editor = await MetaUser.findOneAndUpdate(
+		if (doc && doc.ownerEmail === userEmail) {
+			await MetaUser.findOneAndUpdate(
 				{ email: editorEmail },
 				{
 					$push: {
@@ -27,17 +27,18 @@ export async function PUT(request: NextRequest) {
 			);
 			await Document.updateOne(
 				{ _id: docId },
-				{ $push: { editors: editor._id } }
+				{ $push: { editors: editorEmail } }
 			);
 			return NextResponse.json({
 				message: "Editor added successfully",
 				success: true,
 			});
+		} else {
+			return NextResponse.json(
+				{ error: "Insufficient permission" },
+				{ status: 403 }
+			);
 		}
-		return NextResponse.json(
-			{ error: "Document not found" },
-			{ status: 500 }
-		);
 	} catch (error: unknown) {
 		return NextResponse.json({ error: error }, { status: 500 });
 	}

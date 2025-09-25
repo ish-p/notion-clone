@@ -27,7 +27,6 @@ export async function createNewDocument(): Promise<detailedDocsFormat | null> {
 		.post(
 			"http://localhost:3000/api/document/create",
 			{
-				userId: session.user.id,
 				email: session.user.email,
 			},
 			{
@@ -44,7 +43,7 @@ export async function createNewDocument(): Promise<detailedDocsFormat | null> {
 		.catch(function (error) {
 			console.log(error);
 			return null;
-		})
+		});
 }
 
 export async function addDocumentEditor(
@@ -59,7 +58,7 @@ export async function addDocumentEditor(
 		.put(
 			`http://localhost:3000/api/document/add`,
 			{
-				userId: session.user.id,
+				userEmail: session.user.email,
 				docId,
 				editorEmail,
 			},
@@ -77,7 +76,7 @@ export async function addDocumentEditor(
 		.catch(function (error) {
 			console.log(error);
 			return false;
-		})
+		});
 }
 
 export async function deleteDocument(docId: string): Promise<boolean> {
@@ -88,7 +87,7 @@ export async function deleteDocument(docId: string): Promise<boolean> {
 	return await axios
 		.delete(`http://localhost:3000/api/document/delete`, {
 			params: {
-				userId: session.user.id,
+				email: session.user.email,
 				docId,
 			},
 			headers: {
@@ -103,7 +102,7 @@ export async function deleteDocument(docId: string): Promise<boolean> {
 		.catch(function (error) {
 			console.log(error);
 			return false;
-		})
+		});
 }
 
 export interface detailedDocsFormat {
@@ -127,7 +126,7 @@ export async function getDocumentById(
 	return await axios
 		.get(`http://localhost:3000/api/document/get`, {
 			params: {
-				userId: session.user.id,
+				email: session.user.email,
 				docId,
 			},
 			headers: {
@@ -142,7 +141,7 @@ export async function getDocumentById(
 		.catch(function (error) {
 			console.log(error);
 			return null;
-		})
+		});
 }
 
 export interface docsFormat {
@@ -159,7 +158,7 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 	const res = await axios
 		.get(`http://localhost:3000/api/document/get`, {
 			params: {
-				userId: session.user.id,
+				email: session.user.email,
 			},
 			headers: {
 				// TODO: USE API KEYS INSTEAD OF PASSING COOKIE
@@ -171,8 +170,10 @@ export async function getDocumentsByUserId(): Promise<docsFormat[]> {
 			return r.data.docs;
 		})
 		.catch(function (error) {
-			console.log(error);
+			if (error.status != 500) {
+				console.log(error);
+			}
 			return [];
-		})
+		});
 	return res;
 }

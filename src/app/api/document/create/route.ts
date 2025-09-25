@@ -8,16 +8,15 @@ export async function POST(request: NextRequest) {
 	connect();
 	try {
 		const reqBody = await request.json();
-		const { userId, email } = reqBody;
+		const { email } = reqBody;
 
 		const newDoc = new Document({
-			ownerId: userId,
 			ownerEmail: email,
 		});
 		const savedDoc = await newDoc.save();
 
-		await MetaUser.findByIdAndUpdate(
-			userId,
+		await MetaUser.findOneAndUpdate(
+			{ email: email },
 			{
 				$push: {
 					docs: {
