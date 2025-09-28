@@ -7,20 +7,19 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST() {
-	connect();
-
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		return NextResponse.json(
-			{ error: "You must be logged in to perform this action" },
-			{ status: 401 }
-		);
-	}
-
 	try {
+		connect();
+
+		const session = await auth.api.getSession({
+			headers: await headers(),
+		});
+
+		if (!session) {
+			return NextResponse.json(
+				{ error: "You must be logged in to perform this action" },
+				{ status: 401 }
+			);
+		}
 		const newDoc = new Document({
 			ownerEmail: session.user.email,
 		});

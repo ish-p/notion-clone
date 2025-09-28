@@ -7,20 +7,20 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-	connect();
-
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		return NextResponse.json(
-			{ error: "You must be logged in to perform this action" },
-			{ status: 401 }
-		);
-	}
-
 	try {
+		connect();
+
+		const session = await auth.api.getSession({
+			headers: await headers(),
+		});
+
+		if (!session) {
+			return NextResponse.json(
+				{ error: "You must be logged in to perform this action" },
+				{ status: 401 }
+			);
+		}
+
 		const docId = request.nextUrl.searchParams.get("docId");
 		if (!docId) {
 			return await findAllUserDocs(session.user.email);
