@@ -23,7 +23,6 @@ export default function Sidebar() {
 		const fetchData = async () => {
 			setLoading(true);
 			const docs = await getDocumentsByUser();
-			console.log(docs);
 			setData(docs);
 			setLoading(false);
 		};

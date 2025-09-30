@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import DocumentPage from "@/components/DocumentPage";
+import DocumentPage from "@/components/document/DocumentPage";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 

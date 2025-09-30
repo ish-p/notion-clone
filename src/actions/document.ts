@@ -44,20 +44,20 @@ export async function createNewDocument(): Promise<detailedDocsFormat | null> {
 		});
 }
 
-export async function addDocumentEditor(
-	docId: string,
-	editorEmail: string
-): Promise<boolean> {
+export async function updateDocumentMeta(
+	id: string,
+	data: { title?: string; content?: string; editors?: string[] }
+) {
 	const session = await checkCredentials();
 	if (!session) {
 		return false;
 	}
 	return await axios
 		.put(
-			`http://localhost:3000/api/document/add`,
+			`http://localhost:3000/api/document/update`,
 			{
-				docId,
-				editorEmail,
+				docId: id,
+				data,
 			},
 			{
 				headers: {
@@ -100,8 +100,6 @@ export async function deleteDocument(docId: string): Promise<boolean> {
 			return false;
 		});
 }
-
-// removeEditor function
 
 export interface detailedDocsFormat {
 	_id: string;

@@ -2,7 +2,6 @@
 import { auth } from "@/auth";
 import { connect } from "@/lib/mongodb";
 import Document from "@/models/document";
-import MetaUser from "@/models/metauser";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,7 +21,8 @@ export async function PUT(request: NextRequest) {
 		}
 
 		const reqBody = await request.json();
-		const { docId, editorEmail } = reqBody;
+		const { docId, data } = reqBody;
+		const { title: name, content, editors } = data;
 
 		const doc = await Document.findById(docId);
 
@@ -39,26 +39,27 @@ export async function PUT(request: NextRequest) {
 			);
 		}
 
-		await MetaUser.findOneAndUpdate(
-			{ email: editorEmail },
-			{
-				$push: {
-					docs: {
-						docId: doc._id,
-						name: doc.name,
-						role: "editor",
-					},
-				},
-			},
-			{ upsert: true }
-		);
-		await Document.updateOne(
-			{ _id: docId },
-			{ $push: { editors: editorEmail } }
-		);
+		// await MetaUser.findOneAndUpdate(
+		// 	{ email: editorEmail },
+		// 	{
+		// 		$push: {
+		// 			docs: {
+		// 				docId: doc._id,
+		// 				name: doc.name,
+		// 				role: "editor",
+		// 			},
+		// 		},
+		// 	},
+		// 	{ upsert: true }
+		// );
+		// await Document.updateOne(
+		// 	{ _id: docId },
+		// 	{ $push: { editors: editorEmail } }
+		// );
+		console.log(name, content, editors);
 
 		return NextResponse.json({
-			message: "Editor added successfully",
+			message: "Document updated successfully",
 			success: true,
 		});
 	} catch (error: unknown) {

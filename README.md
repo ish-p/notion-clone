@@ -1,4 +1,5 @@
-## About
-WIP - DO NOT USE
+## Usage
+WIP
 
+## About
 Notion Clone that supports live document sharing, authentication, and AI features like summary.
