@@ -73,9 +73,7 @@ export async function register(_: unknown, formData: FormData) {
 	});
 	if (error) {
 		const tree = z.treeifyError(error);
-		if (
-			!tree.properties?.email?.errors
-		) {
+		if (!tree.properties?.email?.errors) {
 			return {
 				message: error.issues[0].message,
 				fields: { email: formData.get("email") },
@@ -126,7 +124,6 @@ export async function logout() {
 
 export async function signInOauth(_: unknown, formData: FormData) {
 	const type = formData.get("type");
-	let oauthURL: string | undefined = undefined;
 	try {
 		const { url } = await auth.api.signInSocial({
 			body: {
@@ -134,18 +131,17 @@ export async function signInOauth(_: unknown, formData: FormData) {
 				callbackURL: "/",
 			},
 		});
-		oauthURL = url;
+		if (url) {
+			redirect(url);
+		} else {
+			return {
+				message: "OAuth URL not found. Try again later.",
+			};
+		}
 	} catch (error) {
 		console.log(error);
 		return {
 			message: "Something went wrong. Please try again.",
-		};
-	}
-	if (oauthURL) {
-		redirect(oauthURL);
-	} else {
-		return {
-			message: "OAuth URL not found. Try again later.",
 		};
 	}
 }

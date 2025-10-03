@@ -3,15 +3,14 @@ import { auth } from "@/auth";
 import { connect } from "@/lib/mongodb";
 import Document from "@/models/document";
 import MetaUser from "@/models/metauser";
-import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
 	try {
 		connect();
 
 		const session = await auth.api.getSession({
-			headers: await headers(),
+			headers: request.headers,
 		});
 
 		if (!session) {

@@ -2,7 +2,7 @@
 import { auth } from "@/auth";
 import { connect } from "@/lib/mongodb";
 import Document from "@/models/document";
-import { headers } from "next/headers";
+import MetaUser from "@/models/metauser";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function PUT(request: NextRequest) {
 		connect();
 
 		const session = await auth.api.getSession({
-			headers: await headers(),
+			headers: request.headers,
 		});
 
 		if (!session) {
@@ -23,6 +23,7 @@ export async function PUT(request: NextRequest) {
 		const reqBody = await request.json();
 		const { docId, data } = reqBody;
 		const { title: name, content, editors } = data;
+		console.log(name, content, editors);
 
 		const doc = await Document.findById(docId);
 
@@ -39,24 +40,29 @@ export async function PUT(request: NextRequest) {
 			);
 		}
 
-		// await MetaUser.findOneAndUpdate(
-		// 	{ email: editorEmail },
-		// 	{
-		// 		$push: {
-		// 			docs: {
-		// 				docId: doc._id,
-		// 				name: doc.name,
-		// 				role: "editor",
-		// 			},
-		// 		},
-		// 	},
-		// 	{ upsert: true }
-		// );
-		// await Document.updateOne(
-		// 	{ _id: docId },
-		// 	{ $push: { editors: editorEmail } }
-		// );
-		console.log(name, content, editors);
+		if (editors) {
+			const currentEditors = new Set(doc.editors);
+			const sentEditors = new Set(editors);
+
+			const newEditors = sentEditors.difference(currentEditors);
+			const removedEditors = currentEditors.difference(sentEditors);
+
+			// For each new editor, update metauser
+			// For each removed editor, update metauser
+
+			await Document.findByIdAndUpdate(docId, { editors: editors });
+		}
+		if (content) {
+			// WIP
+		}
+		if (name) {
+			await Document.findByIdAndUpdate(docId, { name: name });
+			await MetaUser.updateOne(
+				{ email: doc.ownerEmail, "docs.docId": doc._id },
+				{ $set: { "docs.$.name": name } }
+			);
+			// update for each editor
+		}
 
 		return NextResponse.json({
 			message: "Document updated successfully",

@@ -3,7 +3,6 @@ import { auth } from "@/auth";
 import { connect } from "@/lib/mongodb";
 import Document from "@/models/document";
 import MetaUser from "@/models/metauser";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -11,7 +10,7 @@ export async function GET(request: NextRequest) {
 		connect();
 
 		const session = await auth.api.getSession({
-			headers: await headers(),
+			headers: request.headers,
 		});
 
 		if (!session) {
